@@ -18,14 +18,19 @@ class HTU21D:
     WRITE_USER_REG =            0xE6
     SOFT_RESET =                0xFE
 
-   # Constructor
-    def __init__(self, bus, debug=False):
+    # MRAA I2C bus frequency modes.  These enums should probably be picked up from a header file.
+    I2C_STD =  0
+    I2C_FAST = 1
+    I2C_HIGH = 2
+
+    # Constructor
+    def __init__(self, bus, debug=False, freq=I2C_STD):
         self.x = m.I2c(bus, raw=True)  # raw=True forces manual bus selection, vs. board default
         self.debug = debug
         if self.debug:
             print self.x
+        self.x.frequency(freq)  #default to I2C_STD (up to 100kHz).  Other options:  I2C_FAST (up to 400kHz), I2C_HIGH (up to 3.4MHz)
         self.x.address(0x40) # Address of the HTU21D sensor
-
 
 
     def readUserReg(self, deb=False):
@@ -38,36 +43,33 @@ class HTU21D:
 
     def writeUserReg(self, value, deb=False):
         "Write the user register byte"
-        n = self.x.writeReg(self.WRITE_USER_REG, value)
+        n = self.x.writeReg(self.WRITE_USER_REG, value)  # returns 0x00 on ack, and 0x05 on no response
         if self.debug or deb:
-            print "HTU21D Write User reg: {}, Status: {}, Read back: {}".format (hex(value), hex(n), hex(self.x.readReg(self.READ_USER_REG)))
+            print "HTU21D Write User reg: {}, Status: {}, UserReg read back: {}".format (hex(value), hex(n), hex(self.x.readReg(self.READ_USER_REG)))
         return n
 
 
     def softReset (self, deb=False):
         "Issue soft reset, and wait"
-        n = self.x.writeReg(self.SOFT_RESET, 0)
+        n = self.x.writeByte(self.SOFT_RESET)  # returns 0x00 on ack, and 0x05 on no response
         time.sleep (0.05)  # spec requires 15ms.  Set to 50ms, just because I'm not in that much of a hurry.
         if self.debug or deb:
-            print "HTU21D Soft reset status: {}, Read back: {}".format (hex(n), hex(self.x.readReg(self.READ_USER_REG)))
+            print "HTU21D Soft reset status: {}, UserReg read back: {}".format (hex(n), hex(self.x.readReg(self.READ_USER_REG)))
         return n
 
 
     def readTemperatureData(self, deb=False):
         "Read 3 temperature bytes from the sensor"
-
-        bytes3 = self.x.readBytesReg (self.TRIGGER_TEMP_MEASURE_HOLD, 3)
-        if self.debug or deb:
-            # print "Read temp returned: {0:x}, {0:b}".format (int(str(bytes3)))
-            print "HTU21D Read temp returned:  {} {} {}".format (hex(bytes3[0]),hex(bytes3[1]),hex(bytes3[2]))
-            #print "Read temp returned: {}".format (hex(bytes3))
-        
-        # If the readBytesReg call fails then the returned value is not a bytearray
-        if not (type(bytes3) is bytearray):
+        try:
+            bytes3 = self.x.readBytesReg (self.TRIGGER_TEMP_MEASURE_HOLD, 3)
+        except:
             if self.debug or deb:
-                print "HTU21D Read temp did not return 3 bytes"
-            return -256  # readBytesReg failed
+                print "HTU21D readTemperatureData readBytesReg failed"
+            return -256  # I2C read error
             
+        if self.debug or deb:
+            print "HTU21D Read temp returned:  {} {} {}".format (hex(bytes3[0]),hex(bytes3[1]),hex(bytes3[2]))
+           
         # CRC Check
         if not self.crc8check(bytes3):
             if self.debug or deb:
@@ -90,18 +92,16 @@ class HTU21D:
 
     def readRHData(self, deb=False):
         "Read 3 relative humidity bytes from the sensor"
-
-        bytes3 = self.x.readBytesReg (self.TRIGGER_RH_MEASURE_HOLD, 3)
+        try:
+            bytes3 = self.x.readBytesReg (self.TRIGGER_RH_MEASURE_HOLD, 3)
+        except:
+            if self.debug or deb:
+                print "HTU21D readRHData readBytesReg failed"
+            return -256  # I2C read error
+            
         if self.debug or deb:
-            # print "Read humidity returned: {0:x}, {0:b}".format (int(str(bytes3)))
             print "HTU21D Read RH returned:    {} {} {}".format (hex(bytes3[0]),hex(bytes3[1]),hex(bytes3[2]))
 
-        # If the readBytesReg call fails then the returned value is not a bytearray
-        if not (type(bytes3) is bytearray):
-            if self.debug or deb:
-                print "HTU21D Read RH did not return 3 bytes"
-            return -256  # readBytesReg failed
-            
         # CRC Check
         if not self.crc8check(bytes3):
             if self.debug or deb:
