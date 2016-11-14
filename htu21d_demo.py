@@ -2,6 +2,7 @@
 
 from htu21d import HTU21D
 import socket
+import datetime
 import time
 import json
 from kafka import KafkaProducer
@@ -30,9 +31,9 @@ class TemperatureKafkaLogger:
             # capture temp, relative humidity, and timestamp
             celcius = self.htu.readTemperatureData()
             rh = self.htu.readRHData()
-            epoch_time = time.time()
+            timestamp = datetime.datetime.utcnow().isoformat()[:-3]
 
-            record = {'host': self.host, 'ts': epoch_time, 'celcius': celcius, 'rh': rh}
+            record = {'host': self.host, 'timestamp': timestamp, 'celcius': celcius, 'rh': rh}
 
             # write to Kafka topic
             self.producer.send('temperature', json.dumps(record))
