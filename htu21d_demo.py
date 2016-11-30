@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 
 from htu21d import HTU21D
-import socket
-import datetime
 import time
-import json
-from kafka import KafkaProducer
+import potsdb
 
 
-class TemperatureKafkaLogger:
+class TemperatureHumidityLogger:
 
     """
-        Log temperature, as JSON, to a Kafka topic.
+        Log temperature and relative humidity, and write to OpenTSDB
     """
 
     def __init__(self):
@@ -19,27 +16,22 @@ class TemperatureKafkaLogger:
         self.htu = HTU21D(1, False)    # add <True> to enable all debug messages
 
         self.htu.writeUserReg(0xc3)
-        # print "User Reg: {}".format(hex(self.htu.readUserReg()))
 
-        self.host = socket.gethostname()
-
-        self.producer = KafkaProducer(bootstrap_servers='hadoop02:6667')
+        self.metrics = potsdb.Client(host='10.0.1.11', port=4242, qsize=0, host_tag=True, mps=0, check_host=True)
 
     def run(self):
         while True:
 
-            # capture temp, relative humidity, and timestamp
+            # capture temp, relative humidity
             celcius = self.htu.readTemperatureData()
             rh = self.htu.readRHData()
-            timestamp = datetime.datetime.utcnow().isoformat()[:-3]
 
-            record = {'host': self.host, 'timestamp': timestamp, 'celcius': celcius, 'rh': rh}
-
-            # write to Kafka topic
-            self.producer.send('temperature', json.dumps(record))
+            # sent to OpenTSDB
+            self.metrics.send('celcius', celcius)
+            self.metrics.send('rh', rh)
 
             time.sleep(0.1)
 
 if __name__ == "__main__":
-    temperature_kafka_logger = TemperatureKafkaLogger()
-    temperature_kafka_logger.run()
+    temperature_humidity_logger = TemperatureHumidityLogger()
+    temperature_humidity_logger.run()
