@@ -12,4 +12,5 @@ To interact with the board, I also used the base block:
 ![Edison with the HDU21D](edison_hdu21d.jpg)
 
 OpenTSDB is great way to capture measure data from IoT devices. Here's a video example using the HTU21D:
+
 [![Intel Edison logging to OpenTSDB](https://img.youtube.com/vi/PGFznFWoOZ4/0.jpg)](https://www.youtube.com/watch?v=PGFznFWoOZ4)
