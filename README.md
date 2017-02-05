@@ -1,4 +1,4 @@
-# Python logger for the HTU21D temperature/humidity sensor
+# HTU21D temperature/humidity logger
 
 This logs temperature/humidity from an HTU21D sensor. It was tested on an Intel Edison board with the I2C breakout:
 

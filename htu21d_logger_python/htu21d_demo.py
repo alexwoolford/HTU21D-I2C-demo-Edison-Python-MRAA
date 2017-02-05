@@ -15,8 +15,6 @@ class TemperatureHumidityLogger:
         # Initialise the HTU21D
         self.htu = HTU21D(1, False)    # add <True> to enable all debug messages
 
-        self.htu.writeUserReg(0xc3)
-
         self.metrics = potsdb.Client(host='10.0.1.11', port=4242, qsize=0, host_tag=True, mps=0, check_host=True)
 
     def run(self):
@@ -26,7 +24,8 @@ class TemperatureHumidityLogger:
             celcius = self.htu.readTemperatureData()
             rh = self.htu.readRHData()
 
-            # sent to OpenTSDB
+            print "celcius: " + str(celcius) + "; relative humidity: " + str(rh)
+            # # sent to OpenTSDB
             self.metrics.send('celcius', celcius)
             self.metrics.send('rh', rh)
 
