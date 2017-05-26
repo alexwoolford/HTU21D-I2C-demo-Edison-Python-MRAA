@@ -2,9 +2,26 @@ package io.woolford;
 
 public class SensorReading {
 
+    private String host;
+    private long timestamp;
     private double temperature;
     private double humidity;
-    long timestamp;
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public double getTemperature() {
         return temperature;
@@ -22,20 +39,13 @@ public class SensorReading {
         this.humidity = humidity;
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     @Override
     public String toString() {
         return "SensorReading{" +
-                "temperature=" + temperature +
-                ", humidity=" + humidity +
+                "host='" + host + '\'' +
                 ", timestamp=" + timestamp +
+                ", temperature=" + temperature +
+                ", humidity=" + humidity +
                 '}';
     }
 

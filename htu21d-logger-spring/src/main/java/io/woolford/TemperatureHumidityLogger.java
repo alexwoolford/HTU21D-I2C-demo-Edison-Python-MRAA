@@ -1,16 +1,33 @@
 package io.woolford;
 
+import com.twitter.bijection.Injection;
+import com.twitter.bijection.avro.GenericAvroCodecs;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.reflect.ReflectData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import upm_htu21d.javaupm_htu21dConstants;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @Component
 public class TemperatureHumidityLogger {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final String host = InetAddress.getLocalHost().getHostName();
 
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    public TemperatureHumidityLogger() throws UnknownHostException {
+    }
 
     static {
         try {
@@ -30,13 +47,22 @@ public class TemperatureHumidityLogger {
         sensor.sampleData();
 
         SensorReading sensorReading = new SensorReading();
+        sensorReading.setHost(host);
+        sensorReading.setTimestamp(System.currentTimeMillis() / 1000);
         sensorReading.setTemperature(sensor.getTemperature());
         sensorReading.setHumidity(sensor.getHumidity());
-        sensorReading.setTimestamp(System.currentTimeMillis() / 1000);
 
-        logger.info(sensorReading.toString());
-        //TODO: convert to avro
-        //TODO: write Avro to Kafka topic
+        Schema schema = ReflectData.get().getSchema(SensorReading.class);
+        GenericData.Record record = new GenericData.Record(schema);
+        record.put("host", sensorReading.getHost());
+        record.put("timestamp", sensorReading.getTimestamp());
+        record.put("temperature", sensorReading.getTemperature());
+        record.put("humidity", sensorReading.getHumidity());
+
+        Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
+        byte[] recordBytes = recordInjection.apply(record);
+
+        kafkaTemplate.send("temperature_humidity", recordBytes);
 
     }
 
