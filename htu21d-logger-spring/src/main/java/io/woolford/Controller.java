@@ -39,10 +39,13 @@ public class Controller {
         upm_htu21d.HTU21D sensor = new upm_htu21d.HTU21D(1, javaupm_htu21dConstants.HTU21D_I2C_ADDRESS);
         sensor.sampleData();
 
+        double celsius = sensor.getTemperature();
+        double fahrenheit = (9.0/5.0) * celsius + 32;
+
         SensorReading sensorReading = new SensorReading();
         sensorReading.setHost(host);
         sensorReading.setTimestamp(System.currentTimeMillis() / 1000);
-        sensorReading.setTemperature(sensor.getTemperature());
+        sensorReading.setFahrenheit(fahrenheit);
         sensorReading.setHumidity(sensor.getHumidity());
 
         return sensorReading;

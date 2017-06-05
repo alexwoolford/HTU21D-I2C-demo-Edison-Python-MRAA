@@ -4,7 +4,7 @@ public class SensorReading {
 
     private String host;
     private long timestamp;
-    private double temperature;
+    private double fahrenheit;
     private double humidity;
 
     public String getHost() {
@@ -23,12 +23,12 @@ public class SensorReading {
         this.timestamp = timestamp;
     }
 
-    public double getTemperature() {
-        return temperature;
+    public double getFahrenheit() {
+        return fahrenheit;
     }
 
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
+    public void setFahrenheit(double fahrenheit) {
+        this.fahrenheit = fahrenheit;
     }
 
     public double getHumidity() {
@@ -44,7 +44,7 @@ public class SensorReading {
         return "SensorReading{" +
                 "host='" + host + '\'' +
                 ", timestamp=" + timestamp +
-                ", temperature=" + temperature +
+                ", fahrenheit=" + fahrenheit +
                 ", humidity=" + humidity +
                 '}';
     }
