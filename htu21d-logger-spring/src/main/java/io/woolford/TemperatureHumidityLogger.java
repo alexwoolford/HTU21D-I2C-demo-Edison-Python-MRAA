@@ -16,6 +16,10 @@ import upm_htu21d.javaupm_htu21dConstants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Component
 public class TemperatureHumidityLogger {
@@ -51,21 +55,28 @@ public class TemperatureHumidityLogger {
 
         SensorReading sensorReading = new SensorReading();
         sensorReading.setHost(host);
-        sensorReading.setTimestamp(System.currentTimeMillis() / 1000);
+        sensorReading.setTimestamp(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                .withZone(ZoneOffset.UTC)
+                .format(Instant.now()));
         sensorReading.setFahrenheit(fahrenheit);
         sensorReading.setHumidity(sensor.getHumidity());
 
-        Schema schema = ReflectData.get().getSchema(SensorReading.class);
-        GenericData.Record record = new GenericData.Record(schema);
-        record.put("host", sensorReading.getHost());
-        record.put("timestamp", sensorReading.getTimestamp());
-        record.put("fahrenheit", fahrenheit);
-        record.put("humidity", sensorReading.getHumidity());
+        try {
+            Schema schema = ReflectData.get().getSchema(SensorReading.class);
+            GenericData.Record record = new GenericData.Record(schema);
+            record.put("host", sensorReading.getHost());
+            record.put("timestamp", sensorReading.getTimestamp());
+            record.put("fahrenheit", fahrenheit);
+            record.put("humidity", sensorReading.getHumidity());
 
-        Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
-        byte[] recordBytes = recordInjection.apply(record);
+            Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
+            byte[] recordBytes = recordInjection.apply(record);
 
-        kafkaTemplate.send("temperature_humidity", recordBytes);
+            kafkaTemplate.send("temperature_humidity", recordBytes);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
 
     }
 

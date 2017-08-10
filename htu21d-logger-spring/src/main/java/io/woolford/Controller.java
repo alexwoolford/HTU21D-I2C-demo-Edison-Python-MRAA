@@ -11,6 +11,9 @@ import upm_htu21d.javaupm_htu21dConstants;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @EnableAutoConfiguration
@@ -44,7 +47,9 @@ public class Controller {
 
         SensorReading sensorReading = new SensorReading();
         sensorReading.setHost(host);
-        sensorReading.setTimestamp(System.currentTimeMillis() / 1000);
+        sensorReading.setTimestamp(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                .withZone(ZoneOffset.UTC)
+                .format(Instant.now()));
         sensorReading.setFahrenheit(fahrenheit);
         sensorReading.setHumidity(sensor.getHumidity());
 
