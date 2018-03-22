@@ -44,7 +44,7 @@ public class TemperatureHumidityLogger {
         }
     }
 
-    @Scheduled(cron = "*/10 * * * * *") // run every 10 seconds
+    @Scheduled(cron = "*/2 * * * * *") // run every 2 seconds
     private void logTermperature() throws InterruptedException {
 
         upm_htu21d.HTU21D sensor = new upm_htu21d.HTU21D(1, javaupm_htu21dConstants.HTU21D_I2C_ADDRESS);
