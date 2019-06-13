@@ -1,11 +1,11 @@
 package io.woolford;
 
-import java.time.Instant;
+import java.util.Date;
 
 public class SensorReading {
 
     private String host;
-    private String timestamp;
+    private Date timestamp;
     private double fahrenheit;
     private double humidity;
 
@@ -17,11 +17,11 @@ public class SensorReading {
         this.host = host;
     }
 
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
