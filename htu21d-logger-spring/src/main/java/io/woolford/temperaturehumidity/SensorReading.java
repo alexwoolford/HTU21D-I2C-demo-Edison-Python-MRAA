@@ -1,4 +1,4 @@
-package io.woolford;
+package io.woolford.temperaturehumidity;
 
 import java.util.Date;
 
@@ -6,8 +6,8 @@ public class SensorReading {
 
     private String host;
     private Date timestamp;
-    private double fahrenheit;
-    private double humidity;
+    private float fahrenheit;
+    private float humidity;
 
     public String getHost() {
         return host;
@@ -25,19 +25,19 @@ public class SensorReading {
         this.timestamp = timestamp;
     }
 
-    public double getFahrenheit() {
+    public float getFahrenheit() {
         return fahrenheit;
     }
 
-    public void setFahrenheit(double fahrenheit) {
+    public void setFahrenheit(float fahrenheit) {
         this.fahrenheit = fahrenheit;
     }
 
-    public double getHumidity() {
+    public float getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(float humidity) {
         this.humidity = humidity;
     }
 

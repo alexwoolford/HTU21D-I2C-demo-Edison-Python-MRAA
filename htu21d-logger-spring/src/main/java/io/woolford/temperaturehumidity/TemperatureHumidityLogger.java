@@ -1,7 +1,5 @@
-package io.woolford;
+package io.woolford.temperaturehumidity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Component
@@ -18,7 +15,6 @@ import java.net.UnknownHostException;
 public class TemperatureHumidityLogger {
 
     private static final Logger logger = LoggerFactory.getLogger(TemperatureHumidityLogger.class);
-    private final String host = InetAddress.getLocalHost().getHostName();
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
@@ -38,14 +34,20 @@ public class TemperatureHumidityLogger {
     }
 
     @Scheduled(cron = "*/2 * * * * *") // run every 2 seconds
-    private void logTemperature() throws JsonProcessingException, UnknownHostException {
+    private void logTemperature() throws UnknownHostException {
 
         SensorReader sensorReader = new SensorReader();
 
-        ObjectMapper mapper = new ObjectMapper();
-        String sensorReadingJson = mapper.writeValueAsString(sensorReader.getTemperatureHumidity());
+        SensorReading sensorReading = sensorReader.getSensorReading();
 
-        kafkaTemplate.send("temperature-humidity", sensorReadingJson);
+        SensorReadingAvro sensorReadingAvro = SensorReadingAvro.newBuilder()
+                .setHost(sensorReading.getHost())
+                .setTimestamp((int) System.currentTimeMillis())
+                .setFahrenheit(sensorReading.getFahrenheit())
+                .setHumidity(sensorReading.getHumidity())
+                .build();
+
+        kafkaTemplate.send("temperature-humidity", sensorReadingAvro);
 
     }
 

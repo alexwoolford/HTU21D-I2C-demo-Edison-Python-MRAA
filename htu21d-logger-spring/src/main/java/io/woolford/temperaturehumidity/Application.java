@@ -1,4 +1,4 @@
-package io.woolford;
+package io.woolford.temperaturehumidity;
 
 
 import org.slf4j.Logger;
