@@ -1,11 +1,9 @@
 package io.woolford.temperaturehumidity;
 
-import java.util.Date;
-
 public class SensorReading {
 
     private String host;
-    private Date timestamp;
+    private long timestamp;
     private float fahrenheit;
     private float humidity;
 
@@ -17,11 +15,11 @@ public class SensorReading {
         this.host = host;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

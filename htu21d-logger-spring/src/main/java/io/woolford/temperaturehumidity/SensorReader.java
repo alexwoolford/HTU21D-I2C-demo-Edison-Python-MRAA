@@ -4,7 +4,6 @@ import upm_htu21d.javaupm_htu21dConstants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
 
 class SensorReader {
 
@@ -20,7 +19,7 @@ class SensorReader {
 
         SensorReading sensorReading = new SensorReading();
         sensorReading.setHost(host);
-        sensorReading.setTimestamp(new Date());
+        sensorReading.setTimestamp(System.currentTimeMillis());
         sensorReading.setFahrenheit(fahrenheit);
         sensorReading.setHumidity(sensor.getHumidity());
 

@@ -3,7 +3,7 @@
   "name": "SensorReadingAvro",
   "fields": [
     {"name": "host", "type": "string"},
-    {"name": "timestamp", "type": "int", "logicalType": "timestamp-millis"},
+    {"name": "timestamp", "type": "long", "logicalType": "timestamp-millis"},
     {"name": "fahrenheit",  "type": "float"},
     {"name": "humidity",  "type": "float"}
   ]
