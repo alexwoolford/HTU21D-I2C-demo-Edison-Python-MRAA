@@ -1,0 +1,8 @@
+{"namespace": "io.woolford.differentschema",
+  "type": "record",
+  "name": "DifferentSchemaAvro",
+  "fields": [
+    {"name": "firstname", "type": "string"},
+    {"name": "lastname", "type": "string"}
+  ]
+}

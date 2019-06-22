@@ -40,7 +40,7 @@ public class TemperatureHumidityLogger {
 
         SensorReading sensorReading = sensorReader.getSensorReading();
 
-        SensorReadingAvro sensorReadingAvro = SensorReadingAvro.newBuilder()
+        SensorReadingV1 sensorReadingAvro = SensorReadingV1.newBuilder()
                 .setHost(sensorReading.getHost())
                 .setTimestamp(sensorReading.getTimestamp())
                 .setFahrenheit(sensorReading.getFahrenheit())

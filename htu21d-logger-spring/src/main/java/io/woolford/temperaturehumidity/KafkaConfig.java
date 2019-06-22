@@ -32,12 +32,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, SensorReadingAvro> producerFactory() {
+    public ProducerFactory<String, SensorReadingV1> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
-    public KafkaTemplate<String, SensorReadingAvro> kafkaTemplate() {
+    public KafkaTemplate<String, SensorReadingV1> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

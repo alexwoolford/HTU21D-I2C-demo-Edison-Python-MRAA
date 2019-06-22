@@ -1,0 +1,20 @@
+{
+  "namespace": "io.woolford.temperaturehumidity",
+  "type": "record",
+  "name": "SensorReadingInfluxAvro",
+  "fields": [
+    {"name": "measurement", "type": "string"},
+    {
+      "name": "tags",
+      "type": {
+        "type": "record",
+        "name": "TagsRecord",
+        "fields": [
+          {"name": "host", "type": "string"}
+        ]
+      }
+    },
+    {"name": "fahrenheit", "type": "float"},
+    {"name": "humidity","type": "float"}
+  ]
+}
