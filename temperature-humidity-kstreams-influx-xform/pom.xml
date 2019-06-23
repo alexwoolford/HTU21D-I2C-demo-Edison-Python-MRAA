@@ -10,6 +10,7 @@
 
     <properties>
         <avro.version>1.8.2</avro.version>
+        <confluent.version>5.2.2</confluent.version>
     </properties>
 
     <dependencies>
@@ -21,7 +22,12 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>5.2.2</version>
+            <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>monitoring-interceptors</artifactId>
+            <version>${confluent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>

@@ -2,9 +2,11 @@ package io.woolford.temperaturehumiditykstreamsinfluxxform;
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
-import io.woolford.temperaturehumidity.SensorReadingAvro;
-import io.woolford.temperaturehumidity.SensorReadingInfluxAvro;
+import io.woolford.temperaturehumidity.SensorReadingInfluxV1;
+import io.woolford.temperaturehumidity.SensorReadingV1;
 import io.woolford.temperaturehumidity.TagsRecord;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KStream;
@@ -22,18 +24,20 @@ public class Main {
         props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConstants.SCHEMA_REGISTRY_URL);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        props.put(StreamsConfig.PRODUCER_PREFIX + ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor");
+        props.put(StreamsConfig.CONSUMER_PREFIX + ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor");
 
         final StreamsBuilder builder = new StreamsBuilder();
 
         // create a stream of the raw iris records
-        KStream<String, SensorReadingAvro> temperatureHumidityStream = builder.stream("temperature-humidity");
+        KStream<String, SensorReadingV1> temperatureHumidityStream = builder.stream("temperature-humidity");
 
         temperatureHumidityStream.map((key, value) -> {
 
             TagsRecord tagsRecord = new TagsRecord();
             tagsRecord.setHost(value.getHost());
 
-            SensorReadingInfluxAvro sensorReadingInfluxAvro = new SensorReadingInfluxAvro();
+            SensorReadingInfluxV1 sensorReadingInfluxAvro = new SensorReadingInfluxV1();
             sensorReadingInfluxAvro.setTags(tagsRecord);
 
             sensorReadingInfluxAvro.setMeasurement("temperature-humidity");

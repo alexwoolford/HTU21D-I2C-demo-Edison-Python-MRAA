@@ -1,7 +1,7 @@
 {
   "namespace": "io.woolford.temperaturehumidity",
   "type": "record",
-  "name": "SensorReadingInfluxAvro",
+  "name": "SensorReadingInfluxV1",
   "fields": [
     {"name": "measurement", "type": "string"},
     {

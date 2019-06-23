@@ -1,6 +1,6 @@
 {"namespace": "io.woolford.temperaturehumidity",
   "type": "record",
-  "name": "SensorReadingAvro",
+  "name": "SensorReadingV1",
   "fields": [
     {"name": "host", "type": "string"},
     {"name": "timestamp", "type": "long", "logicalType": "timestamp-millis"},
