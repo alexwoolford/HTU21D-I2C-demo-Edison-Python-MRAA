@@ -19,7 +19,7 @@ class SensorReader {
 
         SensorReading sensorReading = new SensorReading();
         sensorReading.setHost(host);
-        sensorReading.setTimestamp(System.currentTimeMillis());
+        sensorReading.setTimestamp(System.nanoTime());
         sensorReading.setFahrenheit(fahrenheit);
         sensorReading.setHumidity(sensor.getHumidity());
 

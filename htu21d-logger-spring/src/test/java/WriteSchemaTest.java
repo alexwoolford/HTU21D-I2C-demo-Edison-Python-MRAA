@@ -8,13 +8,12 @@ import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WriteSchemaTest {
 
-//    kafka-avro-console-consumer --bootstrap-server cp53.woolford.io:9092 --topic temperature-humidity --property schema.registry.url="http://cp53.woolford.io:8081"
+//    kafka-avro-console-consumer --bootstrap-server cp53.woolford.io:9092 --topic temperature-humidity-test --property schema.registry.url="http://cp53.woolford.io:8081" --from-beginning
 
     @Test
     public void writeGoodSchemaV1Test(){
@@ -29,11 +28,11 @@ public class WriteSchemaTest {
 
         SensorReadingV1 sensorReadingAvro = new SensorReadingV1();
         sensorReadingAvro.setHost("localhost");
-        sensorReadingAvro.setTimestamp(new Date().getTime());
+        sensorReadingAvro.setTimestamp(System.nanoTime());
         sensorReadingAvro.setFahrenheit(72.0f);
         sensorReadingAvro.setHumidity(50.0f);
 
-        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity", sensorReadingAvro);
+        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity-test3", sensorReadingAvro);
 
         kafkaProducer.send(producerRecord);
         kafkaProducer.flush();
@@ -53,20 +52,20 @@ public class WriteSchemaTest {
 
         SensorReadingV2 sensorReadingAvro = new SensorReadingV2();
         sensorReadingAvro.setHost("localhost");
-        sensorReadingAvro.setTimestamp(new Date().getTime());
+        sensorReadingAvro.setTimestamp(System.nanoTime());
         sensorReadingAvro.setFahrenheit(72.0f);
         sensorReadingAvro.setHumidity(50.0f);
         sensorReadingAvro.setPressure(1000.0f);
 
-        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity", sensorReadingAvro);
+        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity-test2", sensorReadingAvro);
 
         kafkaProducer.send(producerRecord);
         kafkaProducer.flush();
 
     }
 
-    @Test(expected = SerializationException.class)
-//    @Test
+//    @Test(expected = SerializationException.class)
+    @Test
     public void writeBadSchemaTest(){
 
 
@@ -82,7 +81,7 @@ public class WriteSchemaTest {
         differentSchemaAvro.setFirstname("Alex");
         differentSchemaAvro.setLastname("Woolford");
 
-        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity", differentSchemaAvro);
+        ProducerRecord producerRecord = new ProducerRecord("temperature-humidity-test3", differentSchemaAvro);
 
         kafkaProducer.send(producerRecord);
         kafkaProducer.flush();
