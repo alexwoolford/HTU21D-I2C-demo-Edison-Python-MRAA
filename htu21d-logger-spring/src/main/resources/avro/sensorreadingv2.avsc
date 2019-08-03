@@ -3,9 +3,9 @@
   "name": "SensorReadingV2",
   "fields": [
     {"name": "host", "type": "string"},
-    {"name": "timestamp", "type": {"type": "long", "logicalType": "timestamp-nanos"}},
+    {"name": "timestamp", "type": {"type": "long", "logicalType": "timestamp-millis"}},
     {"name": "fahrenheit",  "type": "float"},
     {"name": "humidity",  "type": "float"},
-    {"name": "pressure",  "type": ["null", "float"], "default": "null"}
+    {"name": "pressure",  "type": ["null", "float"]}
   ]
 }
